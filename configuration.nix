@@ -98,6 +98,7 @@
       thunderbird
       git
       git-credential-manager
+      tmux
     ];
   };
 
