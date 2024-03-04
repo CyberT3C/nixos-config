@@ -116,10 +116,25 @@
     configure = {
       customRC = ''
         set number
-        set list
+	colorscheme tokyonight
       '';
       packages.myVimPackage = with pkgs.vimPlugins; {
-        start = [ ctrlp ];
+        start = [ 
+	  nvim-lspconfig
+	  tokyonight-nvim
+	  (nvim-treesitter.withPlugins (
+                    plugins: with plugins; [
+                      nix
+		      rust
+                      python
+		      c
+		      lua
+		      vim
+		      vimdoc
+		      query
+                      ]
+	  )) 
+	];
       };
     };
   };
