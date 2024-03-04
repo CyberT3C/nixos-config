@@ -102,6 +102,12 @@
     ];
   };
 
+  # For some reason git uses ssh-askpass in a not intended way
+  # so it will screw up your cli ssh (user, pw) experience
+  # this workaround gets the job done
+  environment.variables = {
+    GIT_ASKPASS="";
+  };
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
