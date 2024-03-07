@@ -1,9 +1,11 @@
-# Edit this configuration file to define what should be installed on
+# Epqit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-
+let
+  vars = import ./vars.nix;
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -99,6 +101,14 @@
       git
       git-credential-manager
       tmux
+      # rust
+      cargo
+      rustc
+      gcc
+      # lsp
+      # - rust, nix
+      rust-analyzer
+      nil
     ];
   };
 
@@ -113,21 +123,37 @@
   environment.systemPackages = with pkgs; [
     wget
     curl
+
   ];
 
+# some EOF without leading spaces does the trick
+# could not get it to work in another fashion
   programs.neovim = {
     enable = true;
     viAlias = true;
     vimAlias = true;
     configure = {
       customRC = ''
-        set number
-	colorscheme tokyonight
-      '';
+        ${vars.neovimRC}
+	lua << EOF
+	${vars.luaRC}
+        ${vars.luaCustomHelp}
+EOF
+	'';
+
       packages.myVimPackage = with pkgs.vimPlugins; {
         start = [ 
 	  nvim-lspconfig
+	  # autocompletion
+	  nvim-cmp
+	  cmp-buffer
+	  cmp-path
+	  cmp-nvim-lsp
+	  # style
 	  tokyonight-nvim
+	  # try some fun
+	  fidget-nvim 
+	  # needed
 	  (nvim-treesitter.withPlugins (
                     plugins: with plugins; [
                       nix
@@ -137,13 +163,16 @@
 		      lua
 		      vim
 		      vimdoc
+                      json
 		      query
                       ]
 	  )) 
 	];
+	opt = [ ];
       };
     };
   };
+
 
 services.pcscd.enable = true;
 programs.gnupg.agent = {
