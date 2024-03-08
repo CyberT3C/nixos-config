@@ -1,14 +1,30 @@
 {
+
+  luaCustomTreesitterKeys = ''
+    --local queries = require('nvim-treesitter.query')  
+    --local ts_utils = require('nvim-treesitter.ts_utils')
+    
+    -- get node under cursor
+    require'nvim-treesitter.configs'.setup {
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = "fff", -- set to `false` to disable one of the mappings
+          node_incremental = "f..",
+          scope_incremental = "f--",
+          node_decremental = "f,,",
+        },
+      },
+    }
+  '';
   # lets list our custom key mappings
   # docfiles dont work for me atm 
   luaCustomHelp = ''
     function ShowCustomHelp()
       local help_content = [[
-        Coding Keys
-        ====================
-
-        Exist with :Q or :bd! (closing the buffer)
-
+        Coding Keys -  Exist with :Q or :bd! (closing the buffer)
+        =========================================================
+       
         |#d| -> Declaration
         |#D| -> Definition      
         |#h| -> Singature Help
@@ -19,8 +35,17 @@
         |#+| -> Rename
         |#a| -> Code Action
         |#f| -> Format
-
+        
         |#L| -> LspInfo
+
+        Nodeselection
+        |fff| current node
+        |f..| increase
+        |f,,| decrease
+        |f--| scope
+
+        |:Inspect|, |:Inspectree|
+  
       ]]
       -- Display the help content in a new buffer
       vim.api.nvim_command('enew') -- Open a new buffer
@@ -35,7 +60,7 @@
     -- Define a command to call the Lua function
     vim.cmd('command! Coding lua ShowCustomHelp()')
   '';
-# read :help lsp-config
+
   luaRC = '' 
     vim.g.mapleader = "#"
     vim.g.maplocalleader = "#"
@@ -72,6 +97,7 @@
         end
 
 	if client.server_capabilities.documentSymbolProvider then
+        -- LSP KEYS
           vim.api.nvim_buf_set_keymap(bufnr, 'n', '<Leader>s', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
         end
 
@@ -85,6 +111,7 @@
           vim.api.nvim_buf_set_keymap(bufnr, 'n', '<Leader>+', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
           vim.api.nvim_buf_set_keymap(bufnr, 'n', '<Leader><Leader>', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
           vim.api.nvim_buf_set_keymap(bufnr, 'n', '<Leader>f', '<cmd>lua vim.lsp.buf.format({async=true})<CR>', opts)
+          -- OTHER KEYS
           vim.api.nvim_buf_set_keymap(bufnr, 'n', '<Leader>L', '<cmd>LspInfo<CR>', opts)
     end
 

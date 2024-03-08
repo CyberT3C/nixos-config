@@ -137,6 +137,7 @@ in
 	lua << EOF
 	${vars.luaRC}
         ${vars.luaCustomHelp}
+        ${vars.luaCustomTreesitterKeys}
 EOF
 	'';
 
