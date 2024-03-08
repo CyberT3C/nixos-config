@@ -99,7 +99,6 @@ in
       blender
       thunderbird
       git
-      git-credential-manager
       tmux
       # rust
       cargo
