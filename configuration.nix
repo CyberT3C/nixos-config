@@ -5,6 +5,7 @@
 { config, pkgs, ... }:
 let
   vars = import ./vars.nix;
+  tmux = import ./tmux.nix;
 in
 {
   imports =
@@ -99,7 +100,6 @@ in
       blender
       thunderbird
       git
-      tmux
       # rust
       cargo
       rustc
@@ -180,13 +180,19 @@ EOF
     };
   };
 
+  programs.tmux = {
+    enable = true;
+    # add to /etc/tmux.conf
+    extraConfig = ''${tmux.RC}'';
+  };
 
-services.pcscd.enable = true;
-programs.gnupg.agent = {
-  enable = true;
-  pinentryFlavor = "gtk2";
-  enableSSHSupport = true;
-};
+
+  services.pcscd.enable = true;
+  programs.gnupg.agent = {
+    enable = true;
+    pinentryFlavor = "gtk2";
+    enableSSHSupport = true;
+  };
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
