@@ -9,10 +9,11 @@ RC = ''
   bind C-Space send-prefix
 
   # window navigation
-  |<shift>a| -> next window
-  |<shift>q| -> prev window
-  bind -n S-a  previous-window
-  bind -n S-q next-window
+  # |<alt>a| -> next window
+  # |<alt>q| -> prev window
+  # |<leader>c| -> new window
+  bind -n M-a  previous-window
+  bind -n M-q next-window
 
   # pane navigation
   # |<alt>[h,j,k,l]|
@@ -21,7 +22,8 @@ RC = ''
   bind -n M-k select-pane -U
   bind -n M-j select-pane -D
 
-  # toogle pane fullscreen and back
+  # zoom in/out on pane
+  # |<leader>Space| -> zoom in & out
   bind Space resize-pane -Z
 
 
@@ -47,7 +49,6 @@ RC = ''
   # intuitve switching [1..n]
   set -g base-index 1
   set -g pane-base-index 1    
-
 '';
     
 }

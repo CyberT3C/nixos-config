@@ -145,6 +145,8 @@ in
     gs = "git status";
     gc = "git commit -m";
     ga = "git add";
+
+    rebuild = "sudo nixos-rebuild switch";
   };
 
 # some EOF without leading spaces does the trick
