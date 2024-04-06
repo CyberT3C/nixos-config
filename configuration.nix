@@ -130,6 +130,23 @@ in
     htop
   ];
 
+  # lets setup some custom aliases
+  programs.bash.shellAliases = {
+    # Start a new session or attach to an existing session named ...
+    tan = "tmux new-session -A -s";
+    # attach to last session
+    ta = "tmux a";
+    tn = "tmux new";
+    # ll style
+    tt = "tmux ls";
+    tls = "tmux ls";
+    tlk = "tmux list-keys";
+
+    gs = "git status";
+    gc = "git commit -m";
+    ga = "git add";
+  };
+
 # some EOF without leading spaces does the trick
 # could not get it to work in another fashion
   programs.neovim = {
