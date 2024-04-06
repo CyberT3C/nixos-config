@@ -1,0 +1,9 @@
+task:
+  name: create tmux cheat sheet for vim
+  done: false
+task:
+  name: setup tmux copy; maybe plugin?
+  done: false
+task:
+  name: check nvim copy into global buffer mapping
+  done: false
