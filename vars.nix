@@ -1,9 +1,55 @@
 {
-
+# https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+# [ ] make settings for vim.diagnostic.goto_next() and vim.diagnostic.goto_prev()
   luaCustomTreesitterKeys = ''
     --local queries = require('nvim-treesitter.query')  
     --local ts_utils = require('nvim-treesitter.ts_utils')
     
+    require'nvim-treesitter.configs'.setup {
+      textobjects = {
+        select = {
+          enable = true,
+    
+          -- Automatically jump forward to textobj, similar to targets.vim
+          lookahead = true,
+    
+          keymaps = {
+            -- You can use the capture groups defined in textobjects.scm
+            ["gg"] = "@function.outer",
+            ["ff"] = "@function.inner",
+            ["ac"] = "@class.outer",
+            -- You can optionally set descriptions to the mappings (used in the desc parameter of
+            -- nvim_buf_set_keymap) which plugins like which-key display
+            ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+            -- You can also use captures from other query groups like `locals.scm`
+            ["fg"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
+          },
+          -- You can choose the select mode (default is charwise 'v')
+          --
+          -- Can also be a function which gets passed a table with the keys
+          -- * query_string: eg '@function.inner'
+          -- * method: eg 'v' or 'o'
+          -- and should return the mode ('v', 'V', or '<c-v>') or a table
+          -- mapping query_strings to modes.
+          selection_modes = {
+            ['@parameter.outer'] = 'v', -- charwise
+            ['@function.outer'] = 'V', -- linewise
+            ['@class.outer'] = '<c-v>', -- blockwise
+          },
+          -- If you set this to `true` (default is `false`) then any textobject is
+          -- extended to include preceding or succeeding whitespace. Succeeding
+          -- whitespace has priority in order to act similarly to eg the built-in
+          -- `ap`.
+          --
+          -- Can also be a function which gets passed a table with the keys
+          -- * query_string: eg '@function.inner'
+          -- * selection_mode: eg 'v'
+          -- and should return true or false
+          --include_surrounding_whitespace = true,
+        },
+      },
+    }
+
     -- get node under cursor
     require'nvim-treesitter.configs'.setup {
       incremental_selection = {
@@ -22,29 +68,44 @@
   luaCustomHelp = ''
     function ShowCustomHelp()
       local help_content = [[
-        Coding Keys -  Exist with :Q or :bd! (closing the buffer)
+        Coding Keys             
+        |:Q| -> exit help page  (or |:bd!| closing buffer)
         =========================================================
-       
+        Code Acions Nvim
         |#d| -> Declaration
         |#D| -> Definition      
         |#h| -> Singature Help
         |#H| -> Hover
         |#i| -> Implementation
         |#r| -> References
-
         |#+| -> Rename
-        |#a| -> Code Action
+        |#a| -> Code Action // dang doubled now need to rebind
         |#f| -> Format
         
+        |#a| -> next error / warning
+        |#q| -> prev error / warning
         |#L| -> LspInfo
+
+
+        Basic nvim
+        |.| to repeat copy paste
+        |vaw, viw| other and inner word selection
+        |^, $| start and end of text in line (regex)
+        |%| jump braces () {}
 
         Nodeselection
         |fff| current node
         |f..| increase
         |f,,| decrease
         |f--| scope
-
         |:Inspect|, |:Inspectree|
+
+
+        Tmux defaults
+        |<cmd>"| split horizontal       window
+        |<cmd>%| split vertical         window
+        |<cmd><arrowKey>| navigation between windows    left, right, up ,down
+        |[hold]<cmd> + <arrowKey>| increase decrease splitscreen
   
       ]]
       -- Display the help content in a new buffer
@@ -113,6 +174,10 @@
           vim.api.nvim_buf_set_keymap(bufnr, 'n', '<Leader>f', '<cmd>lua vim.lsp.buf.format({async=true})<CR>', opts)
           -- OTHER KEYS
           vim.api.nvim_buf_set_keymap(bufnr, 'n', '<Leader>L', '<cmd>LspInfo<CR>', opts)
+          -- next and prev message
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<Leader>a', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<Leader>q', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+
     end
 
     local servers = { 'rust_analyzer', 'nil_ls' }

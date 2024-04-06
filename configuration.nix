@@ -107,7 +107,11 @@ in
       # lsp
       # - rust, nix
       rust-analyzer
+      rustfmt
       nil
+      # try to compile with fsharpc
+      # and run with mono?
+      mono
     ];
   };
 
@@ -122,7 +126,8 @@ in
   environment.systemPackages = with pkgs; [
     wget
     curl
-
+    wl-clipboard
+    htop
   ];
 
 # some EOF without leading spaces does the trick
@@ -167,6 +172,8 @@ EOF
 		      query
                       ]
 	  )) 
+          # try
+          nvim-treesitter-textobjects
 	];
 	opt = [ ];
       };
