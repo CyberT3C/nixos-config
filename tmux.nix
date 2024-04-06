@@ -8,20 +8,29 @@ RC = ''
   set -g prefix C-Space
   bind C-Space send-prefix
 
-  # alt + arrows is what alot of ppl use or <leader> with hjkl
-  # that is not fitting for me
+  # window navigation
+  |<shift>a| -> next window
+  |<shift>q| -> prev window
+  bind -n S-a  previous-window
+  bind -n S-q next-window
+
+  # pane navigation
   # |<alt>[h,j,k,l]|
   bind -n M-h select-pane -L
   bind -n M-l select-pane -R
   bind -n M-k select-pane -U
   bind -n M-j select-pane -D
 
+  # toogle pane fullscreen and back
+  bind Space resize-pane -Z
+
+
   # split panes  
   # -f -bf -fh -bfh == bottom top right left    -h -v == horizontal vertical
   
   # vim style
-  # |<leader>h,j,k,l| -> normal split, 
-  # ||<leader>MISSING| -> small splits      (30%)
+  # |<leader>hjkl| -> normal split, 
+  # |<leader>nm,.| -> small splits    (% for widescreen)
   
   bind h split-window -bfh -c "#{pane_current_path}"
   bind j split-window -f -c "#{pane_current_path}"
@@ -31,8 +40,8 @@ RC = ''
   # split by percentag is -p and -l by lines
   # i think i want commands for a small split
   bind n split-window -p 30 -bfh -c "#{pane_current_path}"
-  bind m split-window -p 30 -f -c "#{pane_current_path}"
-  bind , split-window -p 30 -bf -c "#{pane_current_path}"
+  bind m split-window -p 24 -f -c "#{pane_current_path}"
+  bind , split-window -p 24 -bf -c "#{pane_current_path}"
   bind . split-window -p 30 -fh -c "#{pane_current_path}"
 
   # intuitve switching [1..n]
