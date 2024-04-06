@@ -143,8 +143,17 @@ in
     tlk = "tmux list-keys";
 
     gs = "git status";
+    gst = "git status -sb";
+    gl = "git log";
+    gls = "git log --graph --oneline";
+    gll = "git log --pretty=format:'%h%x09%an%x09%ad%x09%s'";
+    glast = "git log -1 HEAD --stat";
     gc = "git commit -m";
     ga = "git add";
+    # usage gdiff commit-hash1 commit-hash2 filename
+    gdiff = "git difftool -t vimdiff -y";
+    # search for string in commits
+    gsearch = "git rev-list --all | xargs git grep -F";
 
     rebuild = "sudo nixos-rebuild switch";
   };
@@ -176,7 +185,7 @@ EOF
 	  # style
 	  tokyonight-nvim
 	  # try some fun
-	  fidget-nvim 
+	  # fidget-nvim 
 	  # needed
 	  (nvim-treesitter.withPlugins (
                     plugins: with plugins; [

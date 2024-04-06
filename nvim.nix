@@ -188,7 +188,6 @@
       }
     end     
 
-    require("fidget").setup({})
   '';
 
   neovimRC = ''
