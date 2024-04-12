@@ -1,4 +1,4 @@
-# Epqit this configuration file to define what should be installed onQ
+#sh Epqit this configuration file to define what should be installed onQ
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
@@ -128,8 +128,23 @@ in
     curl
     wl-clipboard
     htop
+    #am I done cding hmm ...
+    # how do i run 
+    # eval "$(zoxide init bash)" 
+    # on startup?
+    zoxide
   ];
 
+  #programs.zoxide.enable = true;
+  # programs.bash.shellInit = ''
+  # TEST="hello from nix"
+  # eval "$(zoxide init bash)"
+  # '';
+
+  # enable z command from zoxide
+  programs.bash.interactiveShellInit = ''
+    eval "$(zoxide init bash)"
+  '';
   # lets setup some custom aliases
   programs.bash.shellAliases = {
     # Start a new session or attach to an existing session named ...
@@ -193,10 +208,15 @@ EOF
 		      rust
                       python
 		      c
+                      cpp
+                      c_sharp
+                      gdscript
+                      bash
 		      lua
 		      vim
 		      vimdoc
                       json
+                      yaml
 		      query
                       ]
 	  )) 
