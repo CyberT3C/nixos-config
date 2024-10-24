@@ -1,9 +1,10 @@
 {
 
 RC = ''
-  # try different remapping of <leader> key
-  # I am not sure what like the most 
-  # looks like most ppl use ctrl and space or ctrl and a
+  # ktry adding color support
+  set-option -sa terminal-overrides ",xterm*:Tc"
+
+  # prefox corresponds to <leader> key for me
   unbind C-b
   set -g prefix C-Space
   bind C-Space send-prefix

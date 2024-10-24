@@ -179,8 +179,9 @@
           vim.api.nvim_buf_set_keymap(bufnr, 'n', '<Leader>q', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
 
     end
-
-    local servers = { 'rust_analyzer', 'nil_ls' }
+  
+    -- elm-language-server is called elmls in lspconfig module
+    local servers = { 'rust_analyzer', 'nil_ls', 'elmls'}
     for _, lsp in ipairs(servers) do
       lspconfig[lsp].setup {
         on_attach = on_attach,

@@ -1,8 +1,8 @@
-#sh Epqit this configuration file to define what should be installed onQ
+#i/sh Epqit this configuration file to dsomenameefine what should be installed onQ
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   neovim = import ./nvim.nix;
   tmux = import ./tmux.nix;
@@ -17,6 +17,15 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # boot packages
+  # if we want to change the kernel, we can run
+  boot.kernelPackages = pkgs.linuxPackages_6_11;
+  #boot.kernelPackages = pkgs.linuxPackages_latest;
+  # add Kernel Module
+  #boot.extraModulePackages = [ config.boot.kernelPackages.uscvideo ];
+  # auto load Kerne Module at startup
+  #boot.kernelModules = [ "uscvideo" ];
+
   networking.hostName = "nixos-laptop"; # Define your hostname.
   #networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -26,6 +35,9 @@ in
 
   # Enable networking
   networking.networkmanager.enable = true;
+
+  # dns over vpn?
+  services.resolved.enable = true;
 
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
@@ -50,6 +62,7 @@ in
 
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
+  #services.libinput.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
@@ -58,6 +71,34 @@ in
     variant = "";
   };
 
+  # idk doesnt work for the cam
+  # refactor later
+  nixpkgs.config.allowUnfree = true;
+  #print driver is unfree
+
+#  nixpkgs.config.allowUnfreePredicate = pkg:
+#    builtins.elem (lib.getName pkg) [
+#      "teams"
+##      # Add additional package names here
+##      "libfprint-2-tod1-goodix"
+##      "ipu6-camera-bins"
+##      "ipu6-camera-bins-unstable-2023-10-26-zstd"
+#    ];
+
+  # lets try to activate the fingerrpint
+  services.fprintd = {
+    enable = true;
+    tod.enable = true;
+    tod.driver = pkgs.libfprint-2-tod1-goodix;
+  };
+
+    # Make the webcam work (needs Linux >= 6.6):
+    # check with
+    # nix-shell -p nix-info --run "nix-info -m"
+  hardware.ipu6.enable = true;
+  hardware.ipu6.platform = "ipu6ep";
+  # this is not working for an kernel newer than 6.8
+
   # Configure console keymap
   console.keyMap = "de";
 
@@ -65,7 +106,7 @@ in
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  sound.enable = true;
+  # sound.enable = true; # outdated
   hardware.pulseaudio.enable = false; 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -82,7 +123,8 @@ in
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
-  services.xserver.libinput.enable = true;
+  #services.xserver.libinput.enable = true;
+  services.libinput.enable = true;
 
   # try services for gpg and pinentry
   # TODO: check if really needed
@@ -92,7 +134,7 @@ in
   users.users.developer = {
     isNormalUser = true;
     description = "N";
-    extraGroups = [ "networkmanager" "wheel" "audio" ];
+    extraGroups = [ "networkmanager" "wheel" "audio" "video" ];
     packages = with pkgs; [
       brave
       firefox
@@ -109,9 +151,22 @@ in
       rust-analyzer
       rustfmt
       nil
+      # elm
+      elmPackages.elm 
+      elmPackages.elm-language-server
+      elmPackages.elm-test
+      elmPackages.elm-format
       # try to compile with fsharpc
       # and run with mono?
       mono
+      # latex
+      texliveFull
+      # brother home printer
+      brlaser
+      # work related
+      teams-for-linux
+      #openvpn3
+      openvpn
     ];
   };
 
@@ -133,6 +188,15 @@ in
     # eval "$(zoxide init bash)" 
     # on startup?
     zoxide
+    # openssl
+    openssl_3_3
+    # webcam?
+    #libwebcam
+    #linux-firmware
+    # imge formats?
+    # v4l-utils
+    # do i need for webcam?
+    gst_all_1.gstreamer
   ];
 
   #programs.zoxide.enable = true;
@@ -147,6 +211,9 @@ in
   '';
   # lets setup some custom aliases
   programs.bash.shellAliases = {
+    # task workflow
+    qq = "siqi list";
+    qa = "siqi add";
     # Start a new session or attach to an existing session named ...
     tan = "tmux new-session -A -s";
     # attach to last session
@@ -190,7 +257,7 @@ EOF
 	'';
 
       packages.myVimPackage = with pkgs.vimPlugins; {
-        start = [ 
+        start = [
 	  nvim-lspconfig
 	  # autocompletion
 	  nvim-cmp
@@ -217,7 +284,10 @@ EOF
 		      vimdoc
                       json
                       yaml
+                      helm
 		      query
+                      elm
+                      roc
                       ]
 	  )) 
           # try
@@ -238,9 +308,20 @@ EOF
   services.pcscd.enable = true;
   programs.gnupg.agent = {
     enable = true;
-    pinentryFlavor = "gtk2";
+#    pinentryFlavor = "gtk2";
     enableSSHSupport = true;
   };
+
+
+# try to make webcam work with ovc
+#service.uvcvideo.enable = true;
+#services.uvcvideo.dynctrl.enable = true;
+#  services.uvcvideo = {
+#    dynctrl.enable = true;
+#    packages = [ pkgs.stable.tiscamera ];
+#  };
+  
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -252,7 +333,10 @@ EOF
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh.enable = true;
+
+  # Let's enable nix flakes permanent
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
